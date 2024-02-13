@@ -12,10 +12,17 @@ const QuizApp = () => {
 
   useEffect(() => {
     const storedQuestions = JSON.parse(localStorage.getItem('customQuestions'));
-
     if (storedQuestions && storedQuestions.length > 0) {
       setQuestions(storedQuestions);
+      setCurrentQuestionIndex(parseInt(localStorage.getItem('currentQuestionIndex')));
+      setSelectedOption(localStorage.getItem('selectedOption'));
+      setScore(parseInt(localStorage.getItem('score')));
+      setShowResults(localStorage.getItem('showResults') === 'true');
+      setCustomQuestion(localStorage.getItem('customQuestion'));
+      setCustomOptions(JSON.parse(localStorage.getItem('customOptions')));
+      setCustomAnswer(localStorage.getItem('customAnswer'));
     } else {
+      // Load default questions if no custom questions are stored
       const defaultQuestions = [
         {
           question: 'What is the capital of France?',
@@ -28,11 +35,20 @@ const QuizApp = () => {
           correctAnswer: 'Harper Lee',
         },
       ];
-
       setQuestions(defaultQuestions);
-      localStorage.setItem('customQuestions', JSON.stringify(defaultQuestions));
     }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem('customQuestions', JSON.stringify(questions));
+    localStorage.setItem('currentQuestionIndex', currentQuestionIndex);
+    localStorage.setItem('selectedOption', selectedOption);
+    localStorage.setItem('score', score);
+    localStorage.setItem('showResults', showResults);
+    localStorage.setItem('customQuestion', customQuestion);
+    localStorage.setItem('customOptions', JSON.stringify(customOptions));
+    localStorage.setItem('customAnswer', customAnswer);
+  }, [questions, currentQuestionIndex, selectedOption, score, showResults, customQuestion, customOptions, customAnswer]);
 
   const handleCustomQuestionChange = (e) => {
     setCustomQuestion(e.target.value);
@@ -52,7 +68,6 @@ const QuizApp = () => {
     const updatedQuestions = [...questions];
     updatedQuestions.splice(index, 1);
     setQuestions(updatedQuestions);
-    localStorage.setItem('customQuestions', JSON.stringify(updatedQuestions));
   };
 
   const handleAddCustomQuestion = (e) => {
@@ -68,7 +83,6 @@ const QuizApp = () => {
     setCustomQuestion('');
     setCustomOptions(['', '', '', '']);
     setCustomAnswer('');
-    localStorage.setItem('customQuestions', JSON.stringify(updatedQuestions));
   };
 
   const handleOptionSelect = (option) => {
@@ -94,6 +108,7 @@ const QuizApp = () => {
     setScore(0);
     setShowResults(false);
   };
+
 
   return (
     <div className="min-h-screen bg-gray-200 flex items-center justify-center">
